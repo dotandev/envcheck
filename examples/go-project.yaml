@@ -1,0 +1,28 @@
+version: "1"
+
+tools:
+  - name: go
+    version: ">=1.21.0"
+    required: true
+  - name: docker
+    required: true
+  - name: git
+    required: true
+
+env_vars:
+  - name: GOPATH
+    required: false
+  - name: DATABASE_URL
+    required: true
+  - name: API_KEY
+    required: true
+
+ports:
+  - 8080
+  - 5432
+
+files:
+  - path: go.mod
+    required: true
+  - path: .env
+    required: true

@@ -1,0 +1,29 @@
+[package]
+name = "envcheck"
+version = "0.1.0"
+edition = "2021"
+authors = ["envcheck contributors"]
+description = "A lightweight CLI tool for validating developer environments"
+license = "MIT"
+repository = "https://github.com/dotandev/envcheck"
+keywords = ["cli", "environment", "validation", "developer-tools"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+semver = "1.0"
+colored = "2.1"
+which = "6.0"
+anyhow = "1.0"
+thiserror = "1.0"
+
+[dev-dependencies]
+tempfile = "3.10"
+assert_cmd = "2.0"
+predicates = "3.1"
+
+[[bin]]
+name = "envcheck"
+path = "src/main.rs"

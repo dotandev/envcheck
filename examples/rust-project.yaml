@@ -1,0 +1,20 @@
+version: "1"
+
+tools:
+  - name: rustc
+    version: ">=1.70.0"
+    required: true
+  - name: cargo
+    required: true
+  - name: git
+    required: true
+
+env_vars:
+  - name: RUST_LOG
+    required: false
+
+files:
+  - path: Cargo.toml
+    required: true
+  - path: src/main.rs
+    required: true
