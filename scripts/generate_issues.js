@@ -70,6 +70,11 @@ const issues = [
         title: "Add more example configurations",
         body: "Add more project templates to the `examples/` directory (e.g., Python, Rails, Django, PHP).",
         labels: ["documentation", "good first issue"]
+    },
+    {
+        title: "Publish to crates.io and setup release workflows",
+        body: "We should publish `envcheck` to crates.io for easier installation. This includes setting up automated release workflows to create GitHub Releases with attached binaries and publishing the crate automatically on tag push.",
+        labels: ["enhancement", "help wanted"]
     }
 ];
 
