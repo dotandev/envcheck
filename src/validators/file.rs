@@ -23,18 +23,16 @@ impl Validator for FileValidator {
                 "{} exists",
                 self.check.path
             )));
+        } else if self.check.required {
+            results.push(ValidationResult::error(
+                format!("{} does not exist", self.check.path),
+                Some(format!("Create {} file", self.check.path)),
+            ));
         } else {
-            if self.check.required {
-                results.push(ValidationResult::error(
-                    format!("{} does not exist", self.check.path),
-                    Some(format!("Create {} file", self.check.path)),
-                ));
-            } else {
-                results.push(ValidationResult::warning(
-                    format!("{} does not exist (optional)", self.check.path),
-                    None,
-                ));
-            }
+            results.push(ValidationResult::warning(
+                format!("{} does not exist (optional)", self.check.path),
+                None,
+            ));
         }
 
         Ok(results)
