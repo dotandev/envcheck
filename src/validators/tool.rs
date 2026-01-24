@@ -13,28 +13,22 @@ impl ToolValidator {
     }
 
     fn get_version_command<'a>(&self, tool: &'a str) -> Option<(&'a str, Vec<&'static str>)> {
-        match tool {
-            "node" => Some(("node", vec!["--version"])),
-            "npm" => Some(("npm", vec!["--version"])),
-            "go" => Some(("go", vec!["version"])),
-            "rust" | "rustc" => Some(("rustc", vec!["--version"])),
-            "cargo" => Some(("cargo", vec!["--version"])),
-            "python" | "python3" => Some(("python3", vec!["--version"])),
-            "docker" => Some(("docker", vec!["--version"])),
-            "git" => Some(("git", vec!["--version"])),
-            "java" => Some(("java", vec!["--version"])),
-            "ruby" => Some(("ruby", vec!["--version"])),
-            _ => Some((tool, vec!["--version"])),
-        }
+        let tool = match tool {
+            "rust" => "rustc",
+            "python" => "python3",
+            _ => tool,
+        };
+
+        Some((tool, vec!["--version"]))
     }
 
     fn parse_version(&self, output: &str, _tool: &str) -> Option<String> {
         let output = output.trim();
-        
+
         // Simple version extraction - find first occurrence of X.Y.Z or X.Y pattern
         for word in output.split_whitespace() {
             let cleaned = word.trim_start_matches('v').trim_start_matches('V');
-            
+
             // Check if it looks like a version number
             let parts: Vec<&str> = cleaned.split('.').collect();
             if parts.len() >= 2 && parts.iter().all(|p| p.chars().all(|c| c.is_numeric())) {
@@ -70,7 +64,7 @@ impl ToolValidator {
             let req_ver = requirement.trim_start_matches('=').trim();
             return version == req_ver;
         }
-        
+
         // Default: exact match
         version.contains(requirement)
     }
@@ -102,21 +96,31 @@ impl Validator for ToolValidator {
                 match Command::new(cmd).args(&args).output() {
                     Ok(output) => {
                         let version_output = String::from_utf8_lossy(&output.stdout);
-                        if let Some(version) = self.parse_version(&version_output, &self.check.name) {
+                        if let Some(version) = self.parse_version(&version_output, &self.check.name)
+                        {
                             if self.check_version_requirement(&version, version_req) {
-                                results.push(ValidationResult::success(
-                                    format!("{} {} found", self.check.name, version),
-                                ));
+                                results.push(ValidationResult::success(format!(
+                                    "{} {} found",
+                                    self.check.name, version
+                                )));
                             } else {
                                 results.push(ValidationResult::error(
-                                    format!("{} version {} does not meet requirement {}", 
-                                        self.check.name, version, version_req),
-                                    Some(format!("Update {} to version {}", self.check.name, version_req)),
+                                    format!(
+                                        "{} version {} does not meet requirement {}",
+                                        self.check.name, version, version_req
+                                    ),
+                                    Some(format!(
+                                        "Update {} to version {}",
+                                        self.check.name, version_req
+                                    )),
                                 ));
                             }
                         } else {
                             results.push(ValidationResult::warning(
-                                format!("{} found but version could not be determined", self.check.name),
+                                format!(
+                                    "{} found but version could not be determined",
+                                    self.check.name
+                                ),
                                 None,
                             ));
                         }
@@ -130,9 +134,10 @@ impl Validator for ToolValidator {
                 }
             }
         } else {
-            results.push(ValidationResult::success(
-                format!("{} found", self.check.name),
-            ));
+            results.push(ValidationResult::success(format!(
+                "{} found",
+                self.check.name
+            )));
         }
 
         Ok(results)
