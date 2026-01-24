@@ -5,16 +5,16 @@
 
 **envcheck** is a lightweight CLI tool that validates your development environment against project requirements. Say goodbye to "works on my machine" problems!
 
-## ✨ Features
+## Features
 
-- 🚀 **Fast** - Written in Rust, single binary, no dependencies
-- 📝 **Simple** - Just add a `.envcheck.yaml` file to your project
-- 🔍 **Comprehensive** - Check tools, versions, env vars, ports, and files
-- 🎨 **Beautiful** - Clear, colored output with actionable suggestions
-- 🌍 **Cross-platform** - Works on macOS, Linux, and Windows
-- 🤝 **Community-driven** - Easy to extend with new validators
+- **Fast** - Written in Rust, single binary, no dependencies
+- **Simple** - Just add a `.envcheck.yaml` file to your project
+- **Comprehensive** - Check tools, versions, env vars, ports, and files
+- **Clean Output** - Clear, colored output with actionable suggestions
+- **Cross-platform** - Works on macOS, Linux, and Windows
+- **Community-driven** - Easy to extend with new validators
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -66,10 +66,10 @@ Running environment checks...
 ✓ Port 3000 is available
 ✓ .env exists
 
-❌ 1 issue(s) found. Fix them to continue.
+--- 1 issue(s) found. Fix them to continue.
 ```
 
-## 📖 Configuration
+## Configuration
 
 ### Tools
 
@@ -122,15 +122,15 @@ files:
     required: false
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We love contributions! This project is designed to be community-driven. Here are some ways you can help:
 
-- 🐛 **Report bugs** - Open an issue if you find a bug
-- 💡 **Suggest features** - Have an idea? We'd love to hear it
-- 📝 **Improve docs** - Help make our documentation better
-- 🔧 **Add validators** - Add support for new tools, languages, or checks
-- ✅ **Write tests** - Help us improve test coverage
+- **Report bugs** - Open an issue if you find a bug
+- **Suggest features** - Have an idea? We'd love to hear it
+- **Improve docs** - Help make our documentation better
+- **Add validators** - Add support for new tools, languages, or checks
+- **Write tests** - Help us improve test coverage
 
 Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
@@ -138,7 +138,7 @@ Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 Looking to contribute? Check out issues labeled [`good first issue`](https://github.com/dotandev/envcheck/labels/good%20first%20issue) - these are perfect for newcomers!
 
-## 📚 Examples
+## Examples
 
 See the [`examples/`](examples/) directory for sample configurations:
 
@@ -146,7 +146,7 @@ See the [`examples/`](examples/) directory for sample configurations:
 - [Go project](examples/go-project.yaml)
 - [Rust project](examples/rust-project.yaml)
 
-## 🛠️ Development
+## Development
 
 ```bash
 # Clone the repo
@@ -163,14 +163,14 @@ cargo test
 cargo run -- --help
 ```
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) for details
 
-## 🌟 Inspiration
+## Inspiration
 
 Inspired by tools like [Redis](https://redis.io) - built by the community, for the community.
 
 ---
 
-**Made with ❤️ by the envcheck community**
+**Made by the envcheck community**
