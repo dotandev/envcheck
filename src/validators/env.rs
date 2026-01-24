@@ -22,19 +22,24 @@ impl Validator for EnvValidator {
                 if let Some(pattern) = &self.check.pattern {
                     // TODO: Add regex pattern matching
                     if value.contains(pattern) {
-                        results.push(ValidationResult::success(
-                            format!("{} is set and matches pattern", self.check.name),
-                        ));
+                        results.push(ValidationResult::success(format!(
+                            "{} is set and matches pattern",
+                            self.check.name
+                        )));
                     } else {
                         results.push(ValidationResult::error(
                             format!("{} is set but does not match pattern", self.check.name),
-                            Some(format!("Ensure {} matches pattern: {}", self.check.name, pattern)),
+                            Some(format!(
+                                "Ensure {} matches pattern: {}",
+                                self.check.name, pattern
+                            )),
                         ));
                     }
                 } else {
-                    results.push(ValidationResult::success(
-                        format!("{} is set", self.check.name),
-                    ));
+                    results.push(ValidationResult::success(format!(
+                        "{} is set",
+                        self.check.name
+                    )));
                 }
             }
             Err(_) => {

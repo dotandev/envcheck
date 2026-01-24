@@ -19,9 +19,10 @@ impl Validator for FileValidator {
         let path = Path::new(&self.check.path);
 
         if path.exists() {
-            results.push(ValidationResult::success(
-                format!("{} exists", self.check.path),
-            ));
+            results.push(ValidationResult::success(format!(
+                "{} exists",
+                self.check.path
+            )));
         } else {
             if self.check.required {
                 results.push(ValidationResult::error(

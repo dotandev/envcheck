@@ -1,10 +1,10 @@
 use crate::config::Config;
 use anyhow::Result;
 
-pub mod tool;
 pub mod env;
-pub mod port;
 pub mod file;
+pub mod port;
+pub mod tool;
 
 #[derive(Debug, Clone)]
 pub enum ValidationStatus {

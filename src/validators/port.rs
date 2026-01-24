@@ -18,14 +18,18 @@ impl Validator for PortValidator {
 
         match TcpListener::bind(format!("127.0.0.1:{}", self.port)) {
             Ok(_) => {
-                results.push(ValidationResult::success(
-                    format!("Port {} is available", self.port),
-                ));
+                results.push(ValidationResult::success(format!(
+                    "Port {} is available",
+                    self.port
+                )));
             }
             Err(_) => {
                 results.push(ValidationResult::error(
                     format!("Port {} is already in use", self.port),
-                    Some(format!("Free up port {} or change the port in your config", self.port)),
+                    Some(format!(
+                        "Free up port {} or change the port in your config",
+                        self.port
+                    )),
                 ));
             }
         }

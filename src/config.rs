@@ -1,7 +1,7 @@
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use anyhow::{Context, Result};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
@@ -47,25 +47,32 @@ fn default_true() -> bool {
 
 impl Config {
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let content = fs::read_to_string(path.as_ref())
-            .context("Failed to read config file")?;
-        
-        let config: Config = serde_yaml::from_str(&content)
-            .context("Failed to parse config file")?;
-        
+        let content = fs::read_to_string(path.as_ref()).context("Failed to read config file")?;
+
+        let config: Config =
+            serde_yaml::from_str(&content).context("Failed to parse config file")?;
+
         Ok(config)
     }
 
     pub fn find_config() -> Result<Self> {
-        let config_names = [".envcheck.yaml", ".envcheck.yml", "envcheck.yaml", "envcheck.yml"];
-        
+        let config_names = [
+            ".envcheck.yaml",
+            ".envcheck.yml",
+            "envcheck.yaml",
+            "envcheck.yml",
+        ];
+
         for name in &config_names {
             if Path::new(name).exists() {
                 return Self::load(name);
             }
         }
-        
-        anyhow::bail!("No config file found. Looking for: {}", config_names.join(", "))
+
+        anyhow::bail!(
+            "No config file found. Looking for: {}",
+            config_names.join(", ")
+        )
     }
 }
 

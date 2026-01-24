@@ -40,7 +40,7 @@ impl Reporter {
         }
 
         println!();
-        
+
         if error_count > 0 {
             println!(
                 "{} {} issue(s) found. Fix them to continue.",
@@ -56,12 +56,14 @@ impl Reporter {
         } else {
             println!("{} All checks passed!", "✓".green().bold());
         }
-        
+
         println!();
     }
 
     pub fn has_errors(&self) -> bool {
-        self.results.iter().any(|r| matches!(r.status, ValidationStatus::Error))
+        self.results
+            .iter()
+            .any(|r| matches!(r.status, ValidationStatus::Error))
     }
 
     pub fn exit_code(&self) -> i32 {

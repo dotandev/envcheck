@@ -1,10 +1,10 @@
-use clap::Parser;
 use anyhow::Result;
+use clap::Parser;
 use std::process;
 
 mod config;
-mod validators;
 mod reporter;
+mod validators;
 
 use config::Config;
 use reporter::Reporter;

@@ -1,15 +1,15 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
-use tempfile::NamedTempFile;
 use std::io::Write;
+use tempfile::NamedTempFile;
 
 #[test]
 fn test_cli_help() {
     let mut cmd = Command::cargo_bin("envcheck").unwrap();
     cmd.arg("--help");
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Validate your development environment"));
+    cmd.assert().success().stdout(predicate::str::contains(
+        "Validate your development environment",
+    ));
 }
 
 #[test]
@@ -39,11 +39,12 @@ files:
     required: true
 "#,
         path_str
-    ).unwrap();
+    )
+    .unwrap();
 
     let mut cmd = Command::cargo_bin("envcheck").unwrap();
     cmd.arg("--config").arg(file.path());
-    
+
     // Node check might fail if not installed in CI environment, but PATH and file should pass
     // We check for "Running environment checks" to ensure it started
     cmd.assert()
@@ -59,7 +60,8 @@ fn test_cli_port_validation() {
 ports:
   - 9999
 "#
-    ).unwrap();
+    )
+    .unwrap();
 
     let mut cmd = Command::cargo_bin("envcheck").unwrap();
     cmd.arg("--config").arg(file.path());
