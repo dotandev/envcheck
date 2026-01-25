@@ -1,0 +1,32 @@
+version: "1"
+
+tools:
+  - name: python
+    version: ">=3.10"
+    required: true
+  - name: docker
+    required: true
+  - name: git
+    required: true
+
+env_vars:
+  - name: SECRET_KEY
+    required: true
+  - name: DATABASE_URL
+    required: true
+  - name: DEBUG
+    required: false
+  - name: DJANGO_SETTINGS_MODULE
+    required: false
+
+ports:
+  - 8000
+  - 5432
+
+files:
+  - path: requirements.txt
+    required: true
+  - path: manage.py
+    required: true
+  - path: .env
+    required: true
