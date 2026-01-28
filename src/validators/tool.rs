@@ -73,32 +73,45 @@ impl ToolValidator {
     }
 
     fn check_version_requirement(&self, version: &str, requirement: &str) -> bool {
-        // Simple version comparison
-        // For now, just check if version contains the requirement
-        // TODO: Use proper semver comparison
-        if requirement.starts_with(">=") {
-            let req_ver = requirement.trim_start_matches(">=").trim();
-            return version >= req_ver;
-        }
-        if requirement.starts_with("<=") {
-            let req_ver = requirement.trim_start_matches("<=").trim();
-            return version <= req_ver;
-        }
-        if requirement.starts_with('>') {
-            let req_ver = requirement.trim_start_matches('>').trim();
-            return version > req_ver;
-        }
-        if requirement.starts_with('<') {
-            let req_ver = requirement.trim_start_matches('<').trim();
-            return version < req_ver;
-        }
-        if requirement.starts_with('=') {
-            let req_ver = requirement.trim_start_matches('=').trim();
-            return version == req_ver;
-        }
+        // Parse the detected version
+        let ver = match semver::Version::parse(version) {
+            Ok(v) => v,
+            Err(_) => {
+                // If version parsing fails, try to clean it or fallback to string matching
+                // Some tools might return versions like "1.2" which semver requires "1.2.0"
+                let parts: Vec<&str> = version.split('.').collect();
+                if parts.len() == 2 {
+                    let cleaned = format!("{}.0", version);
+                    if let Ok(v) = semver::Version::parse(&cleaned) {
+                        v
+                    } else {
+                        return version.contains(requirement);
+                    }
+                } else if parts.len() == 1 {
+                    let cleaned = format!("{}.0.0", version);
+                    if let Ok(v) = semver::Version::parse(&cleaned) {
+                        v
+                    } else {
+                        return version.contains(requirement);
+                    }
+                } else {
+                    return version.contains(requirement);
+                }
+            }
+        };
+
+        // Parse the requirement
+        // semver crate expects requirements like ">=1.2.3" or "1.2.3"
+        // If it starts with =, remove it as VersionReq might not like it (or it might be fine)
+        let cleaned_req = requirement.trim_start_matches('=');
         
-        // Default: exact match
-        version.contains(requirement)
+        match semver::VersionReq::parse(cleaned_req) {
+            Ok(req) => req.matches(&ver),
+            Err(_) => {
+                // Fallback to simple string comparison if requirement is not valid semver req
+                version.contains(requirement)
+            }
+        }
     }
 }
 
@@ -227,5 +240,23 @@ OpenJDK 64-Bit Server VM Temurin-25.0.1+8 (build 25.0.1+8-LTS, mixed mode, shari
 
         // Rust
         assert_eq!(validator.parse_version("rustc 1.51.0 (2fd73fabe 2021-03-23)", "rust"), Some("1.51.0".to_string()));
+    }
+
+    #[test]
+    fn test_check_version_requirement() {
+        let check = ToolCheck {
+            name: "test".to_string(),
+            version: None,
+            required: true,
+        };
+        let validator = ToolValidator::new(check);
+
+        assert!(validator.check_version_requirement("14.15.0", ">=12.0.0"));
+        assert!(validator.check_version_requirement("14.15.0", "14.15.0"));
+        assert!(validator.check_version_requirement("14.15.0", ">=14"));
+        assert!(!validator.check_version_requirement("14.15.0", "<14.0.0"));
+        assert!(validator.check_version_requirement("1.16.3", ">=1.15"));
+        assert!(validator.check_version_requirement("1.16", ">=1.15"));
+        assert!(!validator.check_version_requirement("1.14", ">=1.15"));
     }
 }
