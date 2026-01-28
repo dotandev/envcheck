@@ -14,17 +14,10 @@ impl ToolValidator {
 
     fn get_version_command<'a>(&self, tool: &'a str) -> Option<(&'a str, Vec<&'static str>)> {
         match tool {
-            "node" => Some(("node", vec!["--version"])),
-            "npm" => Some(("npm", vec!["--version"])),
             "go" => Some(("go", vec!["version"])),
             "rust" | "rustc" => Some(("rustc", vec!["--version"])),
-            "cargo" => Some(("cargo", vec!["--version"])),
-            "python" | "python3" => Some(("python3", vec!["--version"])),
-            "python2" => Some(("python2", vec!["--version"])),
-            "docker" => Some(("docker", vec!["--version"])),
-            "git" => Some(("git", vec!["--version"])),
             "java" => Some(("java", vec!["-version"])),
-            "ruby" => Some(("ruby", vec!["--version"])),
+            "python" | "python3" => Some(("python3", vec!["--version"])),
             _ => Some((tool, vec!["--version"])),
         }
     }
