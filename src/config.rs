@@ -41,6 +41,8 @@ pub struct FileCheck {
     pub required: bool,
     #[serde(default = "default_false")]
     pub is_directory: bool,
+    #[serde(default)]
+    pub permissions: Option<u32>,
 }
 
 fn default_true() -> bool {
