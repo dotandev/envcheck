@@ -19,18 +19,32 @@ impl Validator for FileValidator {
         let path = Path::new(&self.check.path);
 
         if path.exists() {
-            results.push(ValidationResult::success(
-                format!("{} exists", self.check.path),
-            ));
+            if self.check.is_directory {
+                if path.is_dir() {
+                    results.push(ValidationResult::success(
+                        format!("Directory {} exists", self.check.path),
+                    ));
+                } else {
+                    results.push(ValidationResult::error(
+                        format!("{} exists but is not a directory", self.check.path),
+                        Some(format!("Ensure {} is a directory", self.check.path)),
+                    ));
+                }
+            } else {
+                results.push(ValidationResult::success(
+                    format!("{} exists", self.check.path),
+                ));
+            }
         } else {
+            let item_type = if self.check.is_directory { "Directory" } else { "File" };
             if self.check.required {
                 results.push(ValidationResult::error(
-                    format!("{} does not exist", self.check.path),
-                    Some(format!("Create {} file", self.check.path)),
+                    format!("{} {} does not exist", item_type, self.check.path),
+                    Some(format!("Create {} {}", self.check.path, item_type.to_lowercase())),
                 ));
             } else {
                 results.push(ValidationResult::warning(
-                    format!("{} does not exist (optional)", self.check.path),
+                    format!("{} {} does not exist (optional)", item_type, self.check.path),
                     None,
                 ));
             }
