@@ -32,18 +32,43 @@ impl ToolValidator {
     fn parse_version(&self, output: &str, _tool: &str) -> Option<String> {
         let output = output.trim();
         
-        // Simple version extraction - find first occurrence of X.Y.Z or X.Y pattern
-        for word in output.split_whitespace() {
-            let cleaned = word.trim_start_matches('v').trim_start_matches('V');
-            
-            // Check if it looks like a version number
-            let parts: Vec<&str> = cleaned.split('.').collect();
-            if parts.len() >= 2 && parts.iter().all(|p| p.chars().all(|c| c.is_numeric())) {
-                return Some(cleaned.to_string());
+        // Look for the first thing that looks like a version in the output
+        // Handle common formats like "node v14.15.0", "openjdk version \"25.0.1\"", "ruby 2.6.10p210"
+        
+        // Clean the output by removing common prefixes and quotes
+        let cleaned_output = output.replace('"', " ");
+        
+        for line in cleaned_output.lines() {
+            for word in line.split_whitespace() {
+                // Find the first position of a digit
+                if let Some(digit_pos) = word.find(|c: char| c.is_ascii_digit()) {
+                    let potential_version = &word[digit_pos..];
+                    
+                    // Extract only the leading numeric and dot parts
+                    let mut version_part = String::new();
+                    let mut dot_count = 0;
+                    
+                    for c in potential_version.chars() {
+                        if c.is_ascii_digit() {
+                            version_part.push(c);
+                        } else if c == '.' {
+                            version_part.push(c);
+                            dot_count += 1;
+                        } else {
+                            // Stop at first non-numeric/non-dot character
+                            break;
+                        }
+                    }
+                    
+                    // We need at least X.Y format
+                    if dot_count >= 1 && version_part.len() >= 3 {
+                        return Some(version_part);
+                    }
+                }
             }
         }
 
-        // Fallback: just return the first line
+        // Fallback: just return the first line if nothing else works
         output.lines().next().map(|s| s.to_string())
     }
 
@@ -165,5 +190,42 @@ impl Validator for ToolValidator {
         }
 
         Ok(results)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::ToolCheck;
+
+    #[test]
+    fn test_parse_version() {
+        let check = ToolCheck {
+            name: "test".to_string(),
+            version: None,
+            required: true,
+        };
+        let validator = ToolValidator::new(check);
+
+        // Node.js
+        assert_eq!(validator.parse_version("v14.15.0", "node"), Some("14.15.0".to_string()));
+        
+        // Go
+        assert_eq!(validator.parse_version("go version go1.16.3 darwin/amd64", "go"), Some("1.16.3".to_string()));
+        
+        // Python
+        assert_eq!(validator.parse_version("Python 3.9.1", "python"), Some("3.9.1".to_string()));
+        
+        // OpenJDK
+        let openjdk_output = r#"openjdk version "25.0.1" 2025-10-21 LTS
+OpenJDK Runtime Environment Temurin-25.0.1+8 (build 25.0.1+8-LTS)
+OpenJDK 64-Bit Server VM Temurin-25.0.1+8 (build 25.0.1+8-LTS, mixed mode, sharing)"#;
+        assert_eq!(validator.parse_version(openjdk_output, "java"), Some("25.0.1".to_string()));
+        
+        // Ruby
+        assert_eq!(validator.parse_version("ruby 2.6.10p210 (2022-04-12 revision 67958) [universal.arm64e-darwin25]", "ruby"), Some("2.6.10".to_string()));
+
+        // Rust
+        assert_eq!(validator.parse_version("rustc 1.51.0 (2fd73fabe 2021-03-23)", "rust"), Some("1.51.0".to_string()));
     }
 }
