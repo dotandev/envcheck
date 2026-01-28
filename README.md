@@ -28,28 +28,11 @@ cargo install envcheck
 
 ### Usage
 
-1. Create a `.envcheck.yaml` file in your project root:
+1. Initialize a new configuration or use an existing one:
 
-```yaml
-version: "1"
-
-tools:
-  - name: node
-    version: ">=18.0.0"
-    required: true
-  - name: docker
-    required: true
-
-env_vars:
-  - name: DATABASE_URL
-    required: true
-
-ports:
-  - 3000
-
-files:
-  - path: .env
-    required: true
+```bash
+# Generate a default configuration
+$ envcheck init
 ```
 
 2. Run `envcheck`:
@@ -69,34 +52,40 @@ Running environment checks...
 --- 1 issue(s) found. Fix them to continue.
 ```
 
+3. Export results to JSON for CI/CD:
+
+```bash
+$ envcheck --json
+```
+
 ## Configuration
 
 ### Tools
 
-Check if tools are installed and optionally verify versions:
+Check if tools are installed and verify versions using proper semver comparison:
 
 ```yaml
 tools:
   - name: node
-    version: ">=18.0.0"  # Supports >=, <=, >, <, =
+    version: ">=18.0.0"  # Supports semver ranges
     required: true
   - name: docker
     required: false      # Optional tools won't fail the check
 ```
 
-Supported tools out of the box:
-- `node`, `npm`, `go`, `rust`, `cargo`, `python`, `docker`, `git`, `java`, `ruby`
+Supported tools include `node`, `npm`, `go`, `rust`, `cargo`, `python`, `docker`, `git`, `java`, `ruby`, and more.
 
 ### Environment Variables
 
-Validate that required environment variables are set:
+Validate that required environment variables are set and optionally match a regex:
 
 ```yaml
 env_vars:
   - name: DATABASE_URL
     required: true
-  - name: DEBUG
-    required: false
+  - name: NODE_ENV
+    pattern: "^(development|test|production)$"
+    required: true
 ```
 
 ### Ports
@@ -107,32 +96,25 @@ Check if ports are available:
 ports:
   - 3000
   - 5432
-  - 8080
 ```
 
-### Files
+### Files & Directories
 
-Verify that required files exist:
+Verify that required files or directories exist and have correct permissions:
 
 ```yaml
 files:
   - path: .env
     required: true
-  - path: config/database.yml
-    required: false
+    permissions: 0o600 # Verify octal permissions (Unix)
+  - path: storage/logs
+    is_directory: true
+    required: true
 ```
 
 ## Contributing
 
-We love contributions! This project is designed to be community-driven. Here are some ways you can help:
-
-- **Report bugs** - Open an issue if you find a bug
-- **Suggest features** - Have an idea? We'd love to hear it
-- **Improve docs** - Help make our documentation better
-- **Add validators** - Add support for new tools, languages, or checks
-- **Write tests** - Help us improve test coverage
-
-Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+We love contributions! This project is designed to be community-driven. See our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ### Good First Issues
 
@@ -143,6 +125,8 @@ Looking to contribute? Check out issues labeled [`good first issue`](https://git
 See the [`examples/`](examples/) directory for sample configurations:
 
 - [Node.js project](examples/.envcheck.yaml)
+- [Django project](examples/django-project.yaml)
+- [Rails project](examples/rails-project.yaml)
 - [Go project](examples/go-project.yaml)
 - [Rust project](examples/rust-project.yaml)
 

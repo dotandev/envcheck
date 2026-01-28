@@ -50,6 +50,8 @@ jobs:
     name: Create GitHub Release
     needs: [build-release, publish-crates-io]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Download Artifacts
@@ -61,3 +63,5 @@ jobs:
         with:
           files: artifacts/**/*
           generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
