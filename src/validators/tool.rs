@@ -23,7 +23,7 @@ impl ToolValidator {
             "python2" => Some(("python2", vec!["--version"])),
             "docker" => Some(("docker", vec!["--version"])),
             "git" => Some(("git", vec!["--version"])),
-            "java" => Some(("java", vec!["--version"])),
+            "java" => Some(("java", vec!["-version"])),
             "ruby" => Some(("ruby", vec!["--version"])),
             _ => Some((tool, vec!["--version"])),
         }
