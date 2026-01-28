@@ -1,0 +1,27 @@
+version: "1"
+
+tools:
+  - name: node
+    version: ">=18.0.0"
+    required: true
+  - name: npm
+    version: ">=9.0.0"
+    required: true
+  - name: git
+    required: true
+
+env_vars:
+  - name: NODE_ENV
+    required: false
+  - name: DATABASE_URL
+    required: true
+
+ports:
+  - 3000
+  - 5432
+
+files:
+  - path: .env
+    required: true
+  - path: package.json
+    required: true
