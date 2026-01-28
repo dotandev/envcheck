@@ -6,23 +6,18 @@ on:
       - 'v*'
 
 jobs:
-  create-release:
-    name: Create Release
+  publish-crates-io:
+    name: Publish to crates.io
     runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: false
-          prerelease: false
-          generate_release_notes: true
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Publish to crates.io
+        run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}
 
   build-release:
     name: Build Release Binaries
-    needs: create-release
     strategy:
       matrix:
         include:
@@ -41,18 +36,28 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-      - name: Build
+      - name: Build Binary
         run: cargo build --release --target ${{ matrix.target }}
-      - name: Archive Binary
-        shell: bash
-        run: |
-          BIN_NAME="envcheck"
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            BIN_NAME="envcheck.exe"
-          fi
-          cd target/${{ matrix.target }}/release
-          tar czf ../../../envcheck-${{ github.ref_name }}-${{ matrix.target }}.tar.gz $BIN_NAME
-      - name: Upload Release Asset
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: envcheck-${{ matrix.target }}
+          path: |
+            target/${{ matrix.target }}/release/envcheck
+            target/${{ matrix.target }}/release/envcheck.exe
+
+  create-github-release:
+    name: Create GitHub Release
+    needs: [build-release, publish-crates-io]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: envcheck-${{ github.ref_name }}-${{ matrix.target }}.tar.gz
+          files: artifacts/**/*
+          generate_release_notes: true
