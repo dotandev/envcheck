@@ -1,0 +1,30 @@
+version: "1"
+
+tools:
+  - name: ruby
+    version: ">=3.0.0"
+    required: true
+  - name: bundle
+    required: true
+  - name: node
+    required: false
+  - name: yarn
+    required: false
+
+env_vars:
+  - name: DATABASE_URL
+    required: true
+  - name: RAILS_ENV
+    required: false
+    pattern: "^(development|test|production)$"
+
+ports:
+  - 3000
+
+files:
+  - path: Gemfile
+    required: true
+  - path: config/database.yml
+    required: true
+  - path: .env
+    required: false
