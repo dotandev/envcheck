@@ -1,19 +1,21 @@
 use crate::config::Config;
 use anyhow::Result;
+use serde::Serialize;
 
 pub mod tool;
 pub mod env;
 pub mod port;
 pub mod file;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum ValidationStatus {
     Success,
     Warning,
     Error,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ValidationResult {
     pub status: ValidationStatus,
     pub message: String,

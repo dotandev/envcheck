@@ -22,6 +22,10 @@ struct Args {
     /// Show verbose output
     #[arg(short, long)]
     verbose: bool,
+
+    /// Output in JSON format
+    #[arg(long)]
+    json: bool,
 }
 
 fn main() -> Result<()> {
@@ -43,7 +47,7 @@ fn main() -> Result<()> {
 
     // Report results
     let reporter = Reporter::new(results);
-    reporter.print();
+    reporter.print(args.json);
 
     // Exit with appropriate code
     process::exit(reporter.exit_code());
