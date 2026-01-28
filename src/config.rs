@@ -73,7 +73,7 @@ impl Config {
             }
         }
         
-        anyhow::bail!("No config file found. Looking for: {}", config_names.join(", "))
+        anyhow::bail!("No config file found. Looking for: {}.\n\nTip: You can create a new configuration file by running 'envcheck init' (coming soon!) or by creating a '.envcheck.yaml' file manually.", config_names.join(", "))
     }
 }
 

@@ -10,7 +10,15 @@ impl Reporter {
         Self { results }
     }
 
-    pub fn print(&self) {
+    pub fn print(&self, json: bool) {
+        if json {
+            self.print_json();
+        } else {
+            self.print_text();
+        }
+    }
+
+    fn print_text(&self) {
         println!();
         println!("{}", "Running environment checks...".bold());
         println!();
@@ -58,6 +66,23 @@ impl Reporter {
         }
         
         println!();
+    }
+
+    fn print_json(&self) {
+        let json = serde_json::json!({
+            "results": self.results,
+            "summary": {
+                "errors": self.results.iter().filter(|r| matches!(r.status, ValidationStatus::Error)).count(),
+                "warnings": self.results.iter().filter(|r| matches!(r.status, ValidationStatus::Warning)).count(),
+                "successes": self.results.iter().filter(|r| matches!(r.status, ValidationStatus::Success)).count(),
+            },
+            "passed": !self.has_errors()
+        });
+
+        match serde_json::to_string_pretty(&json) {
+            Ok(s) => println!("{}", s),
+            Err(e) => eprintln!("Failed to generate JSON: {}", e),
+        }
     }
 
     pub fn has_errors(&self) -> bool {

@@ -20,8 +20,12 @@ impl Validator for EnvValidator {
         match env::var(&self.check.name) {
             Ok(value) => {
                 if let Some(pattern) = &self.check.pattern {
-                    // TODO: Add regex pattern matching
-                    if value.contains(pattern) {
+                    let is_match = match regex::Regex::new(pattern) {
+                        Ok(re) => re.is_match(&value),
+                        Err(_) => value.contains(pattern), // Fallback to substring if regex is invalid
+                    };
+
+                    if is_match {
                         results.push(ValidationResult::success(
                             format!("{} is set and matches pattern", self.check.name),
                         ));
