@@ -6,6 +6,9 @@ authors = ["envcheck contributors"]
 description = "A lightweight CLI tool for validating developer environments"
 license = "MIT"
 repository = "https://github.com/dotandev/envcheck"
+readme = "README.md"
+homepage = "https://github.com/dotandev/envcheck"
+documentation = "https://docs.rs/envcheck"
 keywords = ["cli", "environment", "validation", "developer-tools"]
 categories = ["command-line-utilities", "development-tools"]
 
