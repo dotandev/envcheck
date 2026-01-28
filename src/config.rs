@@ -39,10 +39,18 @@ pub struct FileCheck {
     pub path: String,
     #[serde(default = "default_true")]
     pub required: bool,
+    #[serde(default = "default_false")]
+    pub is_directory: bool,
+    #[serde(default)]
+    pub permissions: Option<u32>,
 }
 
 fn default_true() -> bool {
     true
+}
+
+fn default_false() -> bool {
+    false
 }
 
 impl Config {
