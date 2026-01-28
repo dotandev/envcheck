@@ -1,0 +1,30 @@
+version: "1"
+
+tools:
+  - name: python
+    version: ">=3.9.0"
+    required: true
+  - name: pip
+    required: true
+  - name: docker
+    required: false
+
+env_vars:
+  - name: SECRET_KEY
+    required: true
+  - name: DATABASE_URL
+    required: true
+  - name: DEBUG
+    required: false
+    pattern: "^(True|False|1|0)$"
+
+ports:
+  - 8000 # Default Django dev server port
+
+files:
+  - path: manage.py
+    required: true
+  - path: requirements.txt
+    required: true
+  - path: .env
+    required: false
