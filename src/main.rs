@@ -71,6 +71,9 @@ ports:
 files:
   - path: .env
     required: false
+network:
+  - url: https://github.com
+    status_code: 200
 "#;
 
     std::fs::write(config_path, default_config)?;

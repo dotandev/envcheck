@@ -14,6 +14,8 @@ pub struct Config {
     pub ports: Vec<u16>,
     #[serde(default)]
     pub files: Vec<FileCheck>,
+    #[serde(default)]
+    pub network: Vec<NetworkCheck>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -43,6 +45,13 @@ pub struct FileCheck {
     pub is_directory: bool,
     #[serde(default)]
     pub permissions: Option<u32>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct NetworkCheck {
+    pub url: String,
+    #[serde(default)]
+    pub status_code: Option<u16>,
 }
 
 fn default_true() -> bool {

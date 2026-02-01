@@ -6,6 +6,7 @@ pub mod tool;
 pub mod env;
 pub mod port;
 pub mod file;
+pub mod network;
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -76,6 +77,12 @@ pub fn run_all_validations(config: &Config) -> Result<Vec<ValidationResult>> {
     // Validate files
     for file_check in &config.files {
         let validator = file::FileValidator::new(file_check.clone());
+        results.extend(validator.validate()?);
+    }
+
+    // Validate network
+    for network_check in &config.network {
+        let validator = network::NetworkValidator::new(network_check.clone());
         results.extend(validator.validate()?);
     }
 

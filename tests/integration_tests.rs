@@ -5,7 +5,7 @@ use std::io::Write;
 
 #[test]
 fn test_cli_help() {
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--help");
     cmd.assert()
         .success()
@@ -14,7 +14,7 @@ fn test_cli_help() {
 
 #[test]
 fn test_cli_config_not_found() {
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg("non_existent_file.yaml");
     cmd.assert()
         .failure()
@@ -41,7 +41,7 @@ files:
         path_str
     ).unwrap();
 
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg(file.path());
     
     // Node check might fail if not installed in CI environment, but PATH and file should pass
@@ -61,7 +61,7 @@ ports:
 "#
     ).unwrap();
 
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg(file.path());
     cmd.assert()
         .success()
@@ -73,7 +73,7 @@ fn test_cli_init() {
     let temp_dir = tempfile::tempdir().unwrap();
     let config_path = temp_dir.path().join(".envcheck.yaml");
     
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.current_dir(temp_dir.path()).arg("init");
     cmd.assert().success();
     
@@ -95,7 +95,7 @@ env_vars:
 "#
     ).unwrap();
 
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg(file.path()).arg("--json");
     
     let output = cmd.assert().success().get_output().stdout.clone();
@@ -122,7 +122,7 @@ env_vars:
     ).unwrap();
 
     // Test failure
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg(file.path())
        .env("TEST_REGEX_VAR", "abc");
     cmd.assert()
@@ -130,7 +130,7 @@ env_vars:
         .stdout(predicate::str::contains("TEST_REGEX_VAR is set but does not match pattern"));
 
     // Test success
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg(file.path())
        .env("TEST_REGEX_VAR", "123");
     cmd.assert()
@@ -155,7 +155,7 @@ files:
         dir_path
     ).unwrap();
 
-    let mut cmd = Command::cargo_bin("envcheck").unwrap();
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_envcheck"));
     cmd.arg("--config").arg(file.path());
     cmd.assert()
         .success()
